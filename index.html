@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Convite Especial</title>
+  <style>
+    body {
+      background: #ffe6f0;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+      color: #5c005c;
+    }
+
+    .card {
+      background: #fff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 15px rgba(255, 0, 150, 0.2);
+      max-width: 400px;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    button {
+      background-color: #ff66b2;
+      border: none;
+      color: white;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #e0559d;
+    }
+
+    .hidden {
+      display: none;
+      margin-top: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 80px;
+      margin-top: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      resize: none;
+    }
+
+    .confirmation {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #009900;
+      font-weight: bold;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Emanuelly Alves Brandão,<br>você aceita ir jantar comigo no dia 15? 🍽️</h1>
+    <div class="buttons">
+      <button onclick="responderSim()">Sim </button>
+      <button onclick="mostrarObservacao()">Não </button>
+    </div>
+    <div id="observacao" class="hidden">
+      <p>Você poderia me dizer o motivo? </p>
+      <textarea id="motivo" placeholder="Digite aqui..."></textarea>
+      <button onclick="enviarMotivo()">Enviar</button>
+    </div>
+    <div id="mensagemFinal" class="confirmation hidden"></div>
+  </div>
+
+  <script>
+    function mostrarObservacao() {
+      document.getElementById('observacao').classList.remove('hidden');
+      document.getElementById('mensagemFinal').classList.add('hidden');
+    }
+  
+    function enviarMotivo() {
+      const motivo = document.getElementById('motivo').value;
+      if (motivo.trim() === "") {
+        alert("Por favor, escreva um motivo 😢");
+        return;
+      }
+      const dados = {
+        resposta: "NÃO",
+        motivo: motivo.trim()
+      };
+      enviarParaFormspree(dados, "Mensagem enviada com carinho 💌");
+    }
+  
+    function responderSim() {
+      const dados = {
+        resposta: "SIM",
+        motivo: "Aceitou o convite com alegria ❤️"
+      };
+      enviarParaFormspree(dados, "Que felicidade! Já estou ansioso! 💕");
+    }
+  
+    function enviarParaFormspree(dados, mensagemFinal) {
+      fetch("https://formspree.io/f/xqabpdba", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(dados)
+      })
+      .then(response => {
+        if (response.ok) {
+          document.getElementById('observacao').classList.add('hidden');
+          document.getElementById('mensagemFinal').textContent = mensagemFinal;
+          document.getElementById('mensagemFinal').classList.remove('hidden');
+        } else {
+          alert("Algo deu errado ao enviar. 😔 Tente novamente mais tarde.");
+        }
+      })
+      .catch(error => {
+        console.error("Erro ao enviar:", error);
+        alert("Erro de conexão. Verifique sua internet.");
+      });
+    }
+  </script>
+</body>
+</html>
